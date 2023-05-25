@@ -26,6 +26,25 @@
 
 namespace UT {
 
+std::string DefaultMessageLayout::build(const std::any params[]) {
+    std::string prefix, message;
+
+    if (params[0].type() == typeid(std::string)) {
+        prefix = std::any_cast<std::string>(params[0]);
+    } else if (params[0].type() == typeid(const char*)) {
+        prefix = std::any_cast<const char*>(params[0]);
+    }
+
+    if (params[1].type() == typeid(std::string)) {
+        message = std::any_cast<std::string>(params[1]);
+    } else if (params[1].type() == typeid(const char*)) {
+        message = std::any_cast<const char*>(params[1]);
+    }
+
+    std::string currentDate = formatCurrentDate(), currentTime = formatCurrentTime();
+    return currentDate + " " + currentTime + " [" + prefix + "] - " + message;
+}
+
 /******************************************************************************
  * Methods (Protected)
  *****************************************************************************/

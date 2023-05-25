@@ -20,38 +20,24 @@
  * 
  *****************************************************************************/
 
-#ifndef HLK_LOGGER_H
-#define HLK_LOGGER_H
+#ifndef UT_LOGGER_H
+#define UT_LOGGER_H
 
 #include "abstractloggerhandler.h"
 #include "abstractmessagelayout.h"
 
 #include <map>
-#include <mutex>
 #include <vector>
 #include <memory>
-#include <any>
 
 namespace UT {
 
 class Logger {
 public:
-    struct Log {
+    struct LoggerEntity {
         std::shared_ptr<AbstractMessageLayout> layout;
         std::vector<std::shared_ptr<AbstractLoggerHandler>> handlers;
     };
-
-    /**************************************************************************
-     * Constructors / Destructors
-     *************************************************************************/
-
-    Logger() {
-        // m_layout = std::shared_ptr<TMessageLayout>(new TMessageLayout());
-    }
-
-    ~Logger() {
-        mHandlers.clear();
-    }
 
     /**************************************************************************
      * Methods
@@ -60,29 +46,16 @@ public:
     static void create(
         const std::string& name, 
         std::shared_ptr<AbstractMessageLayout> layout, 
-        std::vector<std::shared_ptr<AbstractLoggerHandler>> handlers) {
-        mLoggersByNames[name] = { layout, handlers };
-    }
+        std::vector<std::shared_ptr<AbstractLoggerHandler>> handlers);
 
     template<class... TArgs>
     static void write(const std::string& name, TArgs... args) {
-        std::any anys[] { std::forward<TArgs>(args)... };
-
-        auto& log = mLoggersByNames[name];
-
-        auto message = log.layout->build(anys);
-
+        std::any params[] { std::forward<TArgs>(args)... };
+        auto& log = mLoggerEntitiesByNames[name];
+        auto message = log.layout->build(params);
         for (auto& handler : log.handlers) {
             handler->write(message);
         }
-    }
-
-    /**************************************************************************
-     * Accessors / Mutators
-     *************************************************************************/
-
-    void setMessageLayout(std::shared_ptr<AbstractMessageLayout> layout) {
-        mMessageLayout = layout;
     }
 
 protected:
@@ -90,13 +63,10 @@ protected:
      * Members
      *************************************************************************/
 
-    std::shared_ptr<AbstractMessageLayout> mMessageLayout;
-    std::vector<std::shared_ptr<AbstractLoggerHandler>> mHandlers;
-
-    static std::map<std::string, Log> mLoggersByNames;
+    static std::map<std::string, LoggerEntity> mLoggerEntitiesByNames;
 
 }; // class Logger
 
 } // namespace UT
 
-#endif // HLK_LOGGER_H
+#endif // UT_LOGGER_H

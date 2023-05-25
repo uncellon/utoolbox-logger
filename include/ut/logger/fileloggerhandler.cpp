@@ -20,24 +20,18 @@
  * 
  *****************************************************************************/
 
-#ifndef UT_ABSTRACT_MESSAGE_LAYOUT_H
-#define UT_ABSTRACT_MESSAGE_LAYOUT_H
-
-#include <any>
-#include <string>
+#include "fileloggerhandler.h"
 
 namespace UT {
 
-class AbstractMessageLayout {
-public:
-    /**************************************************************************
-     * Methods
-     *************************************************************************/
+/******************************************************************************
+ * Methods
+ *****************************************************************************/
 
-    virtual std::string build(const std::any params[]) = 0;
-
-}; // class AbstractMessageLayout
+void FileLoggerHandler::write(const std::string& message) {
+    std::ofstream fout(mLogPath, std::ios_base::app);        
+    fout << message << std::endl;
+    fout.close();
+}
 
 } // namespace UT
-
-#endif // UT_ABSTRACT_MESSAGE_LAYOUT_H

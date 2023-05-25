@@ -1,50 +1,64 @@
-# Homebrew Libraries Kit - Logger
+# Uncellon's Toolbox Logger
+
+![UToolbox Logo](logo.png)
 
 - [Description](#description)
 - [Prerequisites](#prerequisites)
-- [Examples](#examples)
-    - [MiniLogger](#minilogger)
-    - [Full example](#full-example)
+- [Example](#example)
+- [License](#license)
 
 ## Description
 
-Logging library for C++
+Logging library for C++ with the following features:
+
+1. You can create your own log handler class, thereby overriding the destination of the log file, etc.
+2. You can create your own log layout class, thereby changing the log message format
+
+Fuck knows why I did it, but it seems to work.
 
 ## Prerequisites
 
 - C++17 or higher
 - CMake >= 3.16
 
-## Examples
+## Example
 
-### MiniLogger
-
-MiniLogger is helper class that provides quickly write messages to the std::cout and file (with rotation support).
+Two logger creation with different location but with same format and terminal output.
 
 ```cpp
-Hlk::MiniLogger::setLogSizeLimit(1000000); // 1 MB
-Hlk::MiniLogger::setLogsCountLimit(5); // 5 logs max
+#include <ut/logger/logger.h>
+#include <ut/logger/defaultmessagelayout.h>
+#include <ut/logger/filerotateloggerhandler.h>
+#include <ut/logger/terminalloggerhandler.h>
 
-Hlk::MiniLogger::write("WARN", "log/common.log", "Warn message");
-```
+using UT::Logger;
 
-### Full example
+int main(int argc, char* argv[]) {
+    // Logger handler with file rotation
+    auto commonFRLoggerHandler = std::shared_ptr<UT::FileRotateLoggerHandler>(new UT::FileRotateLoggerHandler());
+    commonFRLoggerHandler->setLogPath("log/common.log");
+    commonFRLoggerHandler->setMaxLogBytes(100);
+    commonFRLoggerHandler->setMaxLogs(3);
 
-```cpp
-auto logger = Hlk::Logger<Hlk::BasicMessageLayout>::getInstance("common");
+    auto customFRLoggerHandler = std::shared_ptr<UT::FileRotateLoggerHandler>(new UT::FileRotateLoggerHandler());
+    customFRLoggerHandler->setLogPath("log/custom.log");
+    customFRLoggerHandler->setMaxLogBytes(100);
+    customFRLoggerHandler->setMaxLogs(3);
 
-// Configure handlers
-auto tHandler = std::shared_ptr<Hlk::TerminalLoggingHandler>(new Hlk::TerminalLoggingHandler());
+    // Terminal logger handler
+    auto terminalLoggerHandler = std::shared_ptr<UT::TerminalLoggerHandler>(new UT::TerminalLoggerHandler());
 
-auto frlHandler = std::shared_ptr<Hlk::FileRotateLoggingHandler>(new Hlk::FileRotateLoggingHandler());
-frlHandler->setLogFilename("log/common.log");
-frlHandler->setLogSizeLimit(1000000); // 1 MB
-frlHandler->setLogsCountLimit(5); // 5 logs max
+    auto messageLayout = std::shared_ptr<UT::DefaultMessageLayout>(new UT::DefaultMessageLayout);
 
-logger->addHandler(tHandler);
-logger->addHandler(frlHandler);
+    // Register logger
+    Logger::create("common", messageLayout, { commonFRLoggerHandler, terminalLoggerHandler });
+    Logger::create("custom", messageLayout, { customFRLoggerHandler, terminalLoggerHandler });
 
-logger->write("INFO", "My info message"); // Will print "2022-01-14 15:04:30 [INFO] - My info message" on the console
+    Logger::write("common", "INFO", "Hello, World!");
+    Logger::write("custom", "ERR", "My error message");
+
+    return 0;
+}
 ```
 
 ## License
@@ -52,7 +66,7 @@ logger->write("INFO", "My info message"); // Will print "2022-01-14 15:04:30 [IN
 
 The library is licensed under [GNU Lesser General Public License 3.0](https://www.gnu.org/licenses/lgpl-3.0.txt):
 
-Copyright © 2021 Dmitry Plastinin
+Copyright © 2023 Dmitry Plastinin
 
 UT Logger is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as pubblished by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 

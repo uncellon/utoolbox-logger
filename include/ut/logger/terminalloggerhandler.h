@@ -35,11 +35,15 @@ public:
      * Methods
      *************************************************************************/
 
-    virtual void write(const std::string& message) override {
-        std::cout << message << std::endl;
-    }
+    virtual void write(const std::string& message) override;
 
 }; // class TerminalLoggerHandler
+
+/******************************************************************************
+ * Inline definition: Methods
+ *****************************************************************************/
+
+inline void TerminalLoggerHandler::write(const std::string& message) { std::cout << message << std::endl; }
 
 } // namespace UT
 

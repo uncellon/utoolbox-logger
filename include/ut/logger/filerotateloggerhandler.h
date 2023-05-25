@@ -25,9 +25,6 @@
 
 #include "fileloggerhandler.h"
 
-#include <filesystem>
-#include <fstream>
-
 namespace UT {
 
 class FileRotateLoggerHandler : public FileLoggerHandler {
@@ -36,33 +33,7 @@ public:
      * Methods
      *************************************************************************/
 
-    virtual void write(const std::string& message) override {
-        std::ofstream fout(mLogPath, std::ios_base::app);
-
-        // Rotate log file
-        if (message.size() + fout.tellp() > mMaxLogBytes) {
-            fout.close();
-            
-            std::filesystem::remove(mLogPath + "." + std::to_string(mMaxLogs - 1));
-            if (mMaxLogs == 1) {
-                std::filesystem::remove(mLogPath);
-                return;
-            }
-            for (int i = mMaxLogs - 1; i > 0; --i) {
-                if (!std::filesystem::exists(mLogPath + "." + std::to_string(i))) {
-                    continue;
-                }        
-                std::filesystem::rename(mLogPath + "." + std::to_string(i),
-                                        mLogPath + "." + std::to_string(i + 1));
-            }
-            std::filesystem::rename(mLogPath, mLogPath + "." + std::to_string(1));
-
-            fout.open(mLogPath, std::ios_base::app);
-        }
-        
-        fout << message << std::endl;
-        fout.close();
-    }
+    virtual void write(const std::string& message) override;
 
     /**************************************************************************
      * Accessors / Mutators

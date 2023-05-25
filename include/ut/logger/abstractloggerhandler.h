@@ -20,8 +20,8 @@
  * 
  *****************************************************************************/
 
-#ifndef UT_ABSTRACT_LOGGER_HANDLER
-#define UT_ABSTRACT_LOGGER_HANDLER
+#ifndef UT_ABSTRACT_LOGGER_HANDLER_H
+#define UT_ABSTRACT_LOGGER_HANDLER_H
 
 #include <string>
 
@@ -45,4 +45,4 @@ public:
 
 } // namespace UT
 
-#endif // UT_ABSTRACT_LOGGER_HANDLER
+#endif // UT_ABSTRACT_LOGGER_HANDLER_H

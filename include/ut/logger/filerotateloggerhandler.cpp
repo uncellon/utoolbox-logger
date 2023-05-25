@@ -20,25 +20,42 @@
  * 
  *****************************************************************************/
 
-#include "logger.h"
+#include "filerotateloggerhandler.h"
+
+#include <filesystem>
 
 namespace UT {
-
-/******************************************************************************
- * Static initialization
- *****************************************************************************/
-
-std::map<std::string, Logger::LoggerEntity> Logger::mLoggerEntitiesByNames;
 
 /******************************************************************************
  * Methods
  *****************************************************************************/
 
-void Logger::create(
-    const std::string& name, 
-    std::shared_ptr<AbstractMessageLayout> layout, 
-    std::vector<std::shared_ptr<AbstractLoggerHandler>> handlers) {
-    mLoggerEntitiesByNames[name] = { layout, handlers };
+void FileRotateLoggerHandler::write(const std::string& message) {
+    std::ofstream fout(mLogPath, std::ios_base::app);
+
+    // Rotate log file
+    if (message.size() + fout.tellp() > mMaxLogBytes) {
+        fout.close();
+        
+        std::filesystem::remove(mLogPath + "." + std::to_string(mMaxLogs - 1));
+        if (mMaxLogs == 1) {
+            std::filesystem::remove(mLogPath);
+            return;
+        }
+        for (int i = mMaxLogs - 1; i > 0; --i) {
+            if (!std::filesystem::exists(mLogPath + "." + std::to_string(i))) {
+                continue;
+            }        
+            std::filesystem::rename(mLogPath + "." + std::to_string(i),
+                                    mLogPath + "." + std::to_string(i + 1));
+        }
+        std::filesystem::rename(mLogPath, mLogPath + "." + std::to_string(1));
+
+        fout.open(mLogPath, std::ios_base::app);
+    }
+    
+    fout << message << std::endl;
+    fout.close();
 }
 
 } // namespace UT

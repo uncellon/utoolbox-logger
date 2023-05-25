@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(UTLogger VERSION 0.0.4)
+project(UTLogger VERSION 0.0.1)
 
 option(BUILD_EXAMPLES "Build examples" ON)
 

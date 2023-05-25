@@ -35,11 +35,7 @@ public:
      * Methods
      *************************************************************************/
 
-    virtual void write(const std::string &message) override {
-        std::ofstream fout(mLogPath, std::ios_base::app);        
-        fout << message << std::endl;
-        fout.close();
-    }
+    virtual void write(const std::string& message) override;
 
     /**************************************************************************
      * Accessors / Mutators

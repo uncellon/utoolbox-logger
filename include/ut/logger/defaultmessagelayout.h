@@ -33,30 +33,7 @@ public:
      * Methods
      *************************************************************************/
 
-    virtual std::string build(const std::any values[]) override {
-        std::string prefix, message;
-
-        if (values[0].type() == typeid(std::string)) {
-            prefix = std::any_cast<std::string>(values[0]);
-        } else if (values[0].type() == typeid(const char*)) {
-            prefix = std::any_cast<const char*>(values[0]);
-        }
-
-        if (values[1].type() == typeid(std::string)) {
-            message = std::any_cast<std::string>(values[1]);
-        } else if (values[1].type() == typeid(const char*)) {
-            message = std::any_cast<const char*>(values[1]);
-        }
-
-        // return build(std::any_cast<const char*>(values[0]), std::any_cast<const char*>(values[1]));
-        std::string currentDate = formatCurrentDate(), currentTime = formatCurrentTime();
-        return currentDate + " " + currentTime + " [" + prefix + "] - " + message;
-    }
-
-    std::string build(const std::string &prefix, const std::string &message) {
-        std::string currentDate = formatCurrentDate(), currentTime = formatCurrentTime();
-        return currentDate + " " + currentTime + " [" + prefix + "] - " + message;
-    }
+    virtual std::string build(const std::any params[]) override;
 
 protected:
     /**************************************************************************
