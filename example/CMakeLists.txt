@@ -1,4 +1,4 @@
-set(EXAMPLE_PROJECT HlkLogExample)
+set(EXAMPLE_PROJECT UTLoggerExample)
 
 file(GLOB_RECURSE EXAMPLE_SOURCES LIST_DIRECTORIES false *.h *.cpp)
 
